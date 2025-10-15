@@ -51,9 +51,7 @@ Total Orders = COUNT(Sales[OrderNumber])
 Return Rate (%) = DIVIDE(SUM(Sales[Returns]), SUM(Sales[Orders]))
 Revenue Target = CALCULATE([Total Revenue] * 1.05)
 Monthly Growth % = ([Current Month Revenue] - [Previous Month Revenue]) / [Previous Month Revenue]
-Revenue per Customer = DIVIDE([Total Revenue], DISTINCTCOUNT(Customers[CustomerKey]))
+Revenue per Customer = DIVIDE([Total Revenue], DISTINCTCOUNT(Customers[CustomerKey]));
 
-Dasboard Overview 
 
-https://github.com/Harshits9/Bike-Shop-Dashboard/blob/main/Exec%20Dashboard.png
 
