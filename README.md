@@ -2,7 +2,7 @@
 
 A comprehensive Power BI analytics project analyzing bike sales performance, customer behavior, and product trends for Adventure Works company.
 
-![Dashboard Preview]([link-to-your-dashboard-screenshot.png](https://github.com/Harshits9/Bike-Shop-Dashboard/blob/main/Exec%20Dashboard.png))
+![Dashboard Preview]([link-to-your-dashboard-screenshot.png](https://github.com/Harshits9/Bike-Shop-Dashboard/blob/main/Exec%20Dashboard.png)
 
 ## 📊 Project Overview
 
