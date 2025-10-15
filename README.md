@@ -1,201 +1,133 @@
 # 🚴 Adventure Works Bike Sales Analysis Dashboard
 
-A comprehensive Power BI analytics project analyzing bike sales performance, customer behavior, and product trends for Adventure Works company.
+A complete Power BI analytics project that digs into bike sales performance, customer behavior, and product trends for Adventure Works.
 
-![Dashboard Preview]([link-to-your-dashboard-screenshot.png](https://github.com/Harshits9/Bike-Shop-Dashboard/blob/main/Exec%20Dashboard.png)
+![Dashboard Preview](https://raw.githubusercontent.com/Harshits9/Bike-Shop-Dashboard/main/Exec%20Dashboard.png)
 
-## 📊 Project Overview
+## 📊 What This Project Does
 
-This project transforms raw sales data into actionable business insights through interactive dashboards. It covers the complete data analytics lifecycle from ETL to final visualization, enabling stakeholders to make data-driven decisions about inventory, marketing, and sales strategies.
+This project takes raw sales data and turns it into something actually useful. Built interactive dashboards that help make real business decisions about inventory, marketing, and sales strategies. Walked through the entire data pipeline from messy CSVs to polished visualizations.
 
-**Key Metrics:**
+**The Numbers:**
 - Revenue: $24.9M
 - Profit: $10.5M
 - Total Orders: 25.2K
 - Return Rate: 2.2%
 - Unique Customers: 17.4K
 
-## 🎯 Business Objectives
+## 🎯 What I Was Trying to Solve
 
-- Track sales performance across product categories, regions, and time periods
-- Analyze customer demographics and purchasing patterns
-- Monitor product performance and identify top-selling items
-- Evaluate return rates and identify problematic product categories
-- Compare actual performance against targets
-- Calculate revenue per customer and customer lifetime value
+- Track sales across different products, regions, and time periods
+- Figure out who's buying what and why
+- Find the best and worst performing products
+- Keep an eye on return rates to spot quality issues
+- Compare how we're doing against targets
+- Calculate customer lifetime value
 
-## 🛠️ Technical Implementation
+## 🛠️ How I Built This
 
-### 1. ETL (Extract, Transform, Load)
+### ETL Process
 
-**Data Sources:**
-- Sales transactions data
-- Customer demographics
-- Product catalog
-- Geographic information
-- Target metrics
+Started with data from multiple sources - sales transactions, customer info, product catalogs, and geographic data. The data was messy, so I spent time cleaning it up, standardizing product names, filling in gaps, and making sure everything connected properly.
 
-**Transformation Steps:**
-- Cleaned and standardized product names and categories
-- Handled missing values and data inconsistencies
-- Created date hierarchies for time-based analysis
-- Merged multiple data sources using appropriate keys
-- Validated data quality and integrity
+### Power Query Magic
 
-### 2. Power Query (Data Preparation)
+This is where the real data prep happened. Removed duplicates, fixed data types, created useful date columns for time analysis, and joined all the tables together. Also set up some parameters to make the dashboard dynamic so users can filter and explore on their own.
 
-- **Data Cleansing:** Removed duplicates and null values
-- **Column Transformations:** Created calculated columns for derived metrics
-- **Data Type Conversions:** Ensured proper data types for calculations
-- **Table Merging:** Joined customer, product, and sales tables
-- **Parameter Setup:** Created dynamic filters and parameters
-- **Custom Columns:** Added business-specific calculations (e.g., profit margins, customer segments)
+### Data Model
 
-### 3. Data Modeling
+Built a star schema because it's fast and makes sense:
+- Sales table sits in the middle with all the transactions
+- Connected it to dimension tables for customers, products, dates, geography, and targets
+- Made sure relationships were clean and optimized for performance
 
-**Star Schema Implementation:**
-- **Fact Table:** Sales transactions (Orders, Revenue, Returns, Profit)
-- **Dimension Tables:**
-  - DimCustomer (Customer demographics, income, occupation)
-  - DimProduct (Product hierarchy: Category → Subcategory → Product)
-  - DimDate (Calendar with year, quarter, month, day hierarchies)
-  - DimGeography (Country, region information)
-  - DimTarget (Monthly targets for comparison)
+### DAX Measures
 
-**Relationships:**
-- Established one-to-many relationships between dimension and fact tables
-- Created bidirectional filters where necessary
-- Optimized cardinality for performance
+Wrote a bunch of custom calculations to make the dashboard actually useful:
 
-### 4. DAX (Data Analysis Expressions)
+**Revenue stuff:**
+- Total revenue, previous month comparisons, growth percentages
+- Year-to-date and month-to-date calculations
 
-**Key Measures Created:**
+**Profit tracking:**
+- Profit margins, adjusted profit scenarios
+- What-if analysis for price changes
 
-```dax
-// Revenue Calculations
-Total Revenue = SUM(Sales[Revenue])
-Previous Month Revenue = CALCULATE([Total Revenue], DATEADD(DimDate[Date], -1, MONTH))
-Revenue Growth % = DIVIDE([Total Revenue] - [Previous Month Revenue], [Previous Month Revenue], 0)
+**Customer metrics:**
+- How many unique customers we have
+- Revenue per customer to understand value
 
-// Profit Metrics
-Total Profit = SUM(Sales[Profit])
-Profit Margin = DIVIDE([Total Profit], [Total Revenue], 0)
-Adjusted Profit = [Total Profit] * (1 + 'Price Adjustment'[Value])
+**Order analytics:**
+- Total orders, monthly trends
+- Comparison against targets
 
-// Customer Metrics
-Unique Customers = DISTINCTCOUNT(Sales[CustomerKey])
-Revenue per Customer = DIVIDE([Total Revenue], [Unique Customers], 0)
+**Return analysis:**
+- Return rates by product and category
+- Helped identify problem areas
 
-// Order Metrics
-Total Orders = COUNTROWS(Sales)
-Monthly Orders = CALCULATE([Total Orders], DATESMTD(DimDate[Date]))
-Orders vs Target = [Monthly Orders] - [Target Orders]
+Used time intelligence functions heavily and played around with filter contexts to get the calculations just right.
 
-// Return Analysis
-Total Returns = SUM(Sales[Returns])
-Return Rate = DIVIDE([Total Returns], [Total Orders], 0)
+### Exploring the Data
 
-// Time Intelligence
-YTD Revenue = TOTALYTD([Total Revenue], DimDate[Date])
-MTD Orders = TOTALMTD([Total Orders], DimDate[Date])
-```
+Spent time really digging into patterns:
 
-**Advanced DAX Techniques:**
-- Time intelligence functions (DATEADD, TOTALYTD, DATESMTD)
-- Context transition using CALCULATE
-- Filter context manipulation
-- Dynamic segmentation
-- Statistical calculations for anomaly detection
+**Product insights:**
+- Accessories are the volume driver with 17K orders
+- Bikes bring in the most revenue per unit
+- Tires and tubes fly off the shelves
+- Shorts have a return problem we need to fix
 
-### 5. Exploratory Data Analysis (EDA)
+**Customer patterns:**
+- Average customer spends $1,431
+- Professionals are our biggest customer group
+- High-income folks place the most orders
+- Mr. Maurice Shan is our MVP with $12.4K in revenue
 
-**Key Findings:**
+**Geography:**
+- Strong in US, Australia, and Canada
+- Growing presence in Europe
 
-- **Product Performance:**
-  - Accessories lead with 17K orders
-  - Bikes generate highest revenue per unit
-  - Tires and Tubes most ordered subcategory
-  - Shorts have highest return rate
+**Time trends:**
+- Huge 260% growth in orders over the year
+- Steady month-over-month improvements
+- Found a weird dip on July 1, 2021 that needs investigation
 
-- **Customer Insights:**
-  - Average customer value: $1,431
-  - Professionals generate most orders (7.8K)
-  - High-income segment: 11.6K orders
-  - Top customer: Mr. Maurice Shan ($12.4K revenue)
+### Building the Dashboards
 
-- **Geographic Distribution:**
-  - Primary markets: United States, Australia, Canada
-  - European presence: UK, France, Germany
+Created four main pages that tell the whole story:
 
-- **Temporal Trends:**
-  - 260% growth in orders (June 2021 - June 2022)
-  - Consistent month-over-month growth
-  - Seasonal patterns identified
-  - Anomaly detected: July 1, 2021 (unexpectedly low orders)
+**Executive Summary** - The big picture with KPIs, trending revenue, category breakdown, top products, and a map showing where orders come from.
 
-### 6. Interactive Reports & Dashboards
+**Product Analysis** - Drill down into specific products, see how categories perform, play with price adjustments, and spot return rate issues.
 
-**Dashboard Pages:**
+**Customer Analytics** - Who our customers are, what they're worth, top spenders, and how different segments behave.
 
-1. **Executive Summary**
-   - KPI cards for revenue, profit, orders, return rate
-   - Revenue trending line chart
-   - Orders by category breakdown
-   - Top 10 products table
-   - Geographic map visualization
+**Performance Tracking** - How we're doing against targets for orders, revenue, and profit. Shows variance and trends over time.
 
-2. **Product Analysis**
-   - Product hierarchy drill-through
-   - Category/subcategory performance
-   - Price adjustment simulation
-   - Return rate analysis by product type
-   - Interactive filters for deep-dive analysis
+Everything's connected, so clicking on one thing filters everything else. Set up drill-throughs so you can go deep on any metric. Made it work on mobile too.
 
-3. **Customer Analytics**
-   - Customer demographics (income, occupation)
-   - Revenue per customer trends
-   - Top 100 customers table
-   - Customer growth over time
-   - Segment-wise order distribution
+## 📈 What I Learned
 
-4. **Performance vs Target**
-   - Monthly orders vs target comparison
-   - Revenue vs target variance
-   - Profit vs target tracking
-   - Adjusted profit scenarios
-   - Trend analysis with targets
+- Accessories are goldmines - high volume, low returns, good margins
+- Focus marketing on professionals and high-income customers
+- Something's wrong with shorts - returns are too high
+- Geographic expansion opportunity in emerging markets
+- Price sensitivity varies by product - the adjustment feature shows this
 
-**Interactive Features:**
-- Cross-filtering across all visuals
-- Drill-down/drill-through capabilities
-- Dynamic slicers (date, category, region)
-- Tooltips with detailed information
-- Bookmarks for different views
-- Mobile-optimized layout
+## 🔧 Tech Stack
 
-## 📈 Key Insights & Recommendations
+- Power BI Desktop for everything visual
+- Power Query (M language) for data transformation
+- DAX for calculations and measures
+- Started with Excel/CSV files
 
-1. **Product Strategy:** Focus on accessories marketing - high volume, low return rate
-2. **Customer Targeting:** Prioritize professional and high-income segments
-3. **Inventory Management:** Monitor shorts category for quality issues (high returns)
-4. **Geographic Expansion:** Strengthen presence in emerging markets
-5. **Pricing Optimization:** Use price adjustment feature to test scenarios
-
-## 🔧 Tools & Technologies
-
-- **Power BI Desktop:** Dashboard creation and data visualization
-- **Power Query (M):** Data transformation and ETL
-- **DAX:** Advanced calculations and measures
-- **Excel/CSV:** Source data format
-- **SQL:** (if applicable) Data extraction
-
-## 📁 Project Structure
+## 📁 How It's Organized
 
 ```
 ├── Data/
-│   ├── raw/                  # Original data files
-│   ├── processed/            # Cleaned data
-│   └── data_dictionary.md    # Data schema documentation
+│   ├── raw/
+│   ├── processed/
+│   └── data_dictionary.md
 ├── Reports/
 │   ├── AdventureWorks_Dashboard.pbix
 │   └── screenshots/
@@ -206,9 +138,30 @@ MTD Orders = TOTALMTD([Total Orders], DimDate[Date])
 └── README.md
 ```
 
+## 🚀 Want to Use This?
+
+Clone it:
+```bash
+git clone https://github.com/Harshits9/Bike-Shop-Dashboard.git
+```
+
+You'll need Power BI Desktop installed. Open the .pbix file and you're good to go. Hit refresh if you want to update the data. Play around with the filters and slicers to explore different angles.
+
+## 📊 More Screenshots
+
+Check out the repository for additional dashboard views showing customer analytics, product performance details, and target comparisons.
+
+## 👤 About Me
+
+**Harshit**
+- GitHub: [@Harshits9](https://github.com/Harshits9)
+
+## 🙏 Thanks
+
+Built using the Adventure Works sample dataset from Microsoft. Learned a ton from the Power BI community along the way.
 
 ---
 
-⭐ If you find this project helpful, please consider giving it a star!
+If this helped you, drop a star! ⭐
 
 **Last Updated:** October 2025
