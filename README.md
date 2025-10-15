@@ -1,57 +1,214 @@
-# 🚴‍♂️ AdventureWorks Bike Sales Dashboard (Power BI)
+# 🚴 Adventure Works Bike Sales Analysis Dashboard
 
-This Power BI project provides an end-to-end analysis of the **AdventureWorks Bike Sales dataset**, covering key business metrics like revenue, profit, orders, and customer segmentation.  
-The goal of this dashboard is to deliver clear, actionable insights for management and sales teams to make data-driven decisions.
+A comprehensive Power BI analytics project analyzing bike sales performance, customer behavior, and product trends for Adventure Works company.
 
----
+![Dashboard Preview]([link-to-your-dashboard-screenshot.png](https://github.com/Harshits9/Bike-Shop-Dashboard/blob/main/Exec%20Dashboard.png))
 
-## 🧩 Project Overview
+## 📊 Project Overview
 
-The **AdventureWorks Bike Sales Dashboard** visualizes company-wide performance across different countries, product categories, and customer segments.  
-It highlights trends, KPIs, and sales behavior to understand overall growth, identify high-performing products, and analyze return patterns.
+This project transforms raw sales data into actionable business insights through interactive dashboards. It covers the complete data analytics lifecycle from ETL to final visualization, enabling stakeholders to make data-driven decisions about inventory, marketing, and sales strategies.
 
----
+**Key Metrics:**
+- Revenue: $24.9M
+- Profit: $10.5M
+- Total Orders: 25.2K
+- Return Rate: 2.2%
+- Unique Customers: 17.4K
 
-## ⚙️ Tools & Technologies Used
+## 🎯 Business Objectives
 
-- **Power BI Desktop** – for data modeling, DAX calculations, and visualization  
-- **Power Query** – for ETL (Extract, Transform, Load) operations  
-- **DAX (Data Analysis Expressions)** – for creating measures and KPIs  
-- **Excel / CSV** – as the source dataset (AdventureWorks sample data)  
+- Track sales performance across product categories, regions, and time periods
+- Analyze customer demographics and purchasing patterns
+- Monitor product performance and identify top-selling items
+- Evaluate return rates and identify problematic product categories
+- Compare actual performance against targets
+- Calculate revenue per customer and customer lifetime value
 
----
+## 🛠️ Technical Implementation
 
-## 🔄 Workflow Stages
+### 1. ETL (Extract, Transform, Load)
 
-### 🧹 1. ETL (Extract, Transform, Load)
-- Imported multiple datasets from AdventureWorks (Sales, Products, Geography, Customers).
-- Cleaned and transformed data using **Power Query**:
-  - Changed data types (Date, Currency, Text).
-  - Removed duplicates and null values.
-  - Merged tables using relationships (ProductKey, CustomerKey, etc.).
-  - Created a proper date table for time intelligence.
+**Data Sources:**
+- Sales transactions data
+- Customer demographics
+- Product catalog
+- Geographic information
+- Target metrics
 
----
+**Transformation Steps:**
+- Cleaned and standardized product names and categories
+- Handled missing values and data inconsistencies
+- Created date hierarchies for time-based analysis
+- Merged multiple data sources using appropriate keys
+- Validated data quality and integrity
 
-### 📊 2. EDA (Exploratory Data Analysis)
-- Analyzed overall sales distribution across categories and subcategories.
-- Identified top-selling products and high-return items.
-- Studied geographic performance by country and region.
-- Explored customer segmentation by **income level** and **occupation**.
+### 2. Power Query (Data Preparation)
 
----
+- **Data Cleansing:** Removed duplicates and null values
+- **Column Transformations:** Created calculated columns for derived metrics
+- **Data Type Conversions:** Ensured proper data types for calculations
+- **Table Merging:** Joined customer, product, and sales tables
+- **Parameter Setup:** Created dynamic filters and parameters
+- **Custom Columns:** Added business-specific calculations (e.g., profit margins, customer segments)
 
-### 🧮 3. DAX Measures & KPIs
-Custom DAX measures were created to support the dashboard visuals, such as:
+### 3. Data Modeling
 
-```DAX
+**Star Schema Implementation:**
+- **Fact Table:** Sales transactions (Orders, Revenue, Returns, Profit)
+- **Dimension Tables:**
+  - DimCustomer (Customer demographics, income, occupation)
+  - DimProduct (Product hierarchy: Category → Subcategory → Product)
+  - DimDate (Calendar with year, quarter, month, day hierarchies)
+  - DimGeography (Country, region information)
+  - DimTarget (Monthly targets for comparison)
+
+**Relationships:**
+- Established one-to-many relationships between dimension and fact tables
+- Created bidirectional filters where necessary
+- Optimized cardinality for performance
+
+### 4. DAX (Data Analysis Expressions)
+
+**Key Measures Created:**
+
+```dax
+// Revenue Calculations
 Total Revenue = SUM(Sales[Revenue])
+Previous Month Revenue = CALCULATE([Total Revenue], DATEADD(DimDate[Date], -1, MONTH))
+Revenue Growth % = DIVIDE([Total Revenue] - [Previous Month Revenue], [Previous Month Revenue], 0)
+
+// Profit Metrics
 Total Profit = SUM(Sales[Profit])
-Total Orders = COUNT(Sales[OrderNumber])
-Return Rate (%) = DIVIDE(SUM(Sales[Returns]), SUM(Sales[Orders]))
-Revenue Target = CALCULATE([Total Revenue] * 1.05)
-Monthly Growth % = ([Current Month Revenue] - [Previous Month Revenue]) / [Previous Month Revenue]
-Revenue per Customer = DIVIDE([Total Revenue], DISTINCTCOUNT(Customers[CustomerKey]));
+Profit Margin = DIVIDE([Total Profit], [Total Revenue], 0)
+Adjusted Profit = [Total Profit] * (1 + 'Price Adjustment'[Value])
+
+// Customer Metrics
+Unique Customers = DISTINCTCOUNT(Sales[CustomerKey])
+Revenue per Customer = DIVIDE([Total Revenue], [Unique Customers], 0)
+
+// Order Metrics
+Total Orders = COUNTROWS(Sales)
+Monthly Orders = CALCULATE([Total Orders], DATESMTD(DimDate[Date]))
+Orders vs Target = [Monthly Orders] - [Target Orders]
+
+// Return Analysis
+Total Returns = SUM(Sales[Returns])
+Return Rate = DIVIDE([Total Returns], [Total Orders], 0)
+
+// Time Intelligence
+YTD Revenue = TOTALYTD([Total Revenue], DimDate[Date])
+MTD Orders = TOTALMTD([Total Orders], DimDate[Date])
+```
+
+**Advanced DAX Techniques:**
+- Time intelligence functions (DATEADD, TOTALYTD, DATESMTD)
+- Context transition using CALCULATE
+- Filter context manipulation
+- Dynamic segmentation
+- Statistical calculations for anomaly detection
+
+### 5. Exploratory Data Analysis (EDA)
+
+**Key Findings:**
+
+- **Product Performance:**
+  - Accessories lead with 17K orders
+  - Bikes generate highest revenue per unit
+  - Tires and Tubes most ordered subcategory
+  - Shorts have highest return rate
+
+- **Customer Insights:**
+  - Average customer value: $1,431
+  - Professionals generate most orders (7.8K)
+  - High-income segment: 11.6K orders
+  - Top customer: Mr. Maurice Shan ($12.4K revenue)
+
+- **Geographic Distribution:**
+  - Primary markets: United States, Australia, Canada
+  - European presence: UK, France, Germany
+
+- **Temporal Trends:**
+  - 260% growth in orders (June 2021 - June 2022)
+  - Consistent month-over-month growth
+  - Seasonal patterns identified
+  - Anomaly detected: July 1, 2021 (unexpectedly low orders)
+
+### 6. Interactive Reports & Dashboards
+
+**Dashboard Pages:**
+
+1. **Executive Summary**
+   - KPI cards for revenue, profit, orders, return rate
+   - Revenue trending line chart
+   - Orders by category breakdown
+   - Top 10 products table
+   - Geographic map visualization
+
+2. **Product Analysis**
+   - Product hierarchy drill-through
+   - Category/subcategory performance
+   - Price adjustment simulation
+   - Return rate analysis by product type
+   - Interactive filters for deep-dive analysis
+
+3. **Customer Analytics**
+   - Customer demographics (income, occupation)
+   - Revenue per customer trends
+   - Top 100 customers table
+   - Customer growth over time
+   - Segment-wise order distribution
+
+4. **Performance vs Target**
+   - Monthly orders vs target comparison
+   - Revenue vs target variance
+   - Profit vs target tracking
+   - Adjusted profit scenarios
+   - Trend analysis with targets
+
+**Interactive Features:**
+- Cross-filtering across all visuals
+- Drill-down/drill-through capabilities
+- Dynamic slicers (date, category, region)
+- Tooltips with detailed information
+- Bookmarks for different views
+- Mobile-optimized layout
+
+## 📈 Key Insights & Recommendations
+
+1. **Product Strategy:** Focus on accessories marketing - high volume, low return rate
+2. **Customer Targeting:** Prioritize professional and high-income segments
+3. **Inventory Management:** Monitor shorts category for quality issues (high returns)
+4. **Geographic Expansion:** Strengthen presence in emerging markets
+5. **Pricing Optimization:** Use price adjustment feature to test scenarios
+
+## 🔧 Tools & Technologies
+
+- **Power BI Desktop:** Dashboard creation and data visualization
+- **Power Query (M):** Data transformation and ETL
+- **DAX:** Advanced calculations and measures
+- **Excel/CSV:** Source data format
+- **SQL:** (if applicable) Data extraction
+
+## 📁 Project Structure
+
+```
+├── Data/
+│   ├── raw/                  # Original data files
+│   ├── processed/            # Cleaned data
+│   └── data_dictionary.md    # Data schema documentation
+├── Reports/
+│   ├── AdventureWorks_Dashboard.pbix
+│   └── screenshots/
+├── Documentation/
+│   ├── DAX_Measures.md
+│   ├── Data_Model.png
+│   └── Requirements.md
+└── README.md
+```
 
 
+---
 
+⭐ If you find this project helpful, please consider giving it a star!
+
+**Last Updated:** October 2025
